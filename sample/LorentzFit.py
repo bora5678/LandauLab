@@ -34,7 +34,7 @@ def LorentzFit(freq, signal, start) -> tuple:
     r_squared = 1 - (ss_res / ss_tot)
     adjusted_r_squared = 1 - (1 - r_squared) * (len(y) - 1) / (len(y) - len(popt) - 1)
     standard_errors = np.sqrt(np.diag(pcov))
-    dcoef = np.appemd(standard_errors, adjusted_r_squared)
+    dcoef = np.append(standard_errors, adjusted_r_squared)
    
     return yfit, popt, dcoef 
 
