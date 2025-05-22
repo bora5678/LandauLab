@@ -1,4 +1,4 @@
-from pymeasure.instruments import Keithley2400
+from pymeasure.instruments import Keithley2400 
 
 
 class Keithley2400_predefined_parameters():

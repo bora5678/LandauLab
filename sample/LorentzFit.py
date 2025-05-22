@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import curve_fit
 
-def lorentzian(x, q, d, f_res, n1, n2) -> np.ndarray:
+def lorentzian(x, q, d, f_res, n1, n2):
     """Lorentzian function"""
     # q - quality, d - drive power, f_res, n1 - noise level p1, n2 - noise level p2
     numerator  = q * d
@@ -14,12 +14,12 @@ def LorentzFit(freq, signal, start) -> tuple:
     x = np.reshape(freq, (-1,))
     y = np.reshape(signal, (-1,))
 
-    index_max_sig = np.where(y = max(y))
+    index_max_sig: int  = np.where(y == max(y))[0][0]
 
     if np.size(start) == 0:
-        start = [75000, 1e8, x(index_max_sig), 0, 1] # q - quality, d - drive power, f_res, n1 - noise level p1, n2 - noise level p2
+        start = [75000, 1e8, x[index_max_sig], 0, 1] # q - quality, d - drive power, f_res, n1 - noise level p1, n2 - noise level p2
     else:
-        start[2] = x(index_max_sig)
+        start[2] = x[index_max_sig]
     fit_options = {
     'max_nfev': 5000,      # Equivalent to MaxIter
     'ftol': 1e-18,         # Function tolerance (TolFun)
