@@ -1,0 +1,9 @@
+pytest
+pytest-cov
+pymeasure
+numpy 
+scipy
+matplotlib
+RsInstrument
+pyvisa
+pyvisa-py
