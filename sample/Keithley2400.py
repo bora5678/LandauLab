@@ -1,0 +1,22 @@
+#REWORK THIS CLASS
+
+
+from pymeasure.instruments import Keithley2400 
+
+
+class Keithley2400_predefined_parameters():
+    """Class to predefine the Keithley2400 parameters."""
+
+    def __init__(self):
+        self.name = 'keithley'
+        self.volt = -20.5
+        self.volt_init = -20.5
+        self.regstep = 20e-4
+        self.regstep_init = 20e-4
+
+    def set_parameters(self):
+        """Set the Keithley2400 parameters."""
+        self.keithley = Keithley2400('GPIB::24') #replace with your GPIB address
+        self.keithley.apply_voltage(self.volt)
+        
+
