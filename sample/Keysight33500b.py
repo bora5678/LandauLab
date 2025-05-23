@@ -59,13 +59,13 @@ import pyvisa
 
 
 
-class Keysight33500B():
+class Keysight33500B:
     """Class to define functions and values used for the control of Keysight 33500b"""
 
-    def __init__(self, dev, stat, msg):
-        self.dev = dev
-        self.stat = stat
-        self.msg = msg
+    def __init__(self):
+        self.dev = None
+        self.stat = None
+        self.msg = None
 
         rm = pyvisa.ResourceManager('@py')
         devices = rm.list_resources('?*')

@@ -60,10 +60,10 @@ import time
 class Keysight81150:
     """Class to control the Keysight 81150A Pulse Function Arbitrary Generator"""
     
-    def __init__(self, dev=None, stat=None, msg=None):
-        self.dev = dev
-        self.stat = stat
-        self.msg = msg
+    def __init__(self):
+        self.dev = None
+        self.stat = None
+        self.msg = None
 
         rm = pyvisa.ResourceManager('@py')
         devices = rm.list_resources('?*')

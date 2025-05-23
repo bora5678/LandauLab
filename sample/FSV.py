@@ -58,12 +58,13 @@
 from RsInstrument import RsInstrument
 import numpy as np
 
-class FSV():
+class FSV:
     """Class to control the FSV"""
-
+# add return values to the functions
+# add error handling
     def __init__(self):
         self.name = 'FSV'
-        self.points = 2001
+        self.points = 2001 # to be removed, added identifiers
         self.sweeps_noise = 3
         self.bw_noise = 10
         self.points_low = 1001
