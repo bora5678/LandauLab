@@ -1,9 +1,11 @@
 from sample.Keysight_pfag_81150 import Keysight81150
 from sample.FSV import FSV
+from sample.Keithley2400 import Keithley2400_predefined_parameters
 
 if __name__ == '__main__':
     fsv = FSV()
     gen = Keysight81150()
+    yok = Keithley2400_predefined_parameters()
 
     # The following line is unrelated to Keysight33500B and uses FSV as intended fsv.bw(bandwidth=100, sweeppoints=2001, sweepvalue=1.0, sweeptime=1)  # Set bandwidth and sweep time
     fsv.span(freq_span=1e6)  # Set frequency span to 1 MHz

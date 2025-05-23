@@ -66,16 +66,18 @@ class Keysight81150:
         self.msg = None
 
         rm = pyvisa.ResourceManager('@py')
-        devices = rm.list_resources('?*')
+        #devices = rm.list_resources('?*')
         # Find the first device with 'TCPIP' in its name
-        tcpip_devices = [dev for dev in devices if 'TCPIP' in dev.upper()]
-        if not tcpip_devices:
-            raise Exception("No TCPIP device found.")
-        my_device = tcpip_devices[0]
-        instrument = rm.open_resource(my_device)
-        print(f"Connected to: {instrument.query('*IDN?')}")
-        instrument.write('DISP On')
-        self.dev = instrument
+       # tcpip_devices = [dev for dev in devices if 'TCPIP' in dev.upper()]
+       # if not tcpip_devices:
+        #    raise Exception("No TCPIP device found.")
+       # my_device = tcpip_devices[0]
+        my_device = rm.open_resource('TCPIP0::A-81150A-821936::inst0::INSTR')
+        #instrument = rm.open_resource(my_device)
+        print(f"Connected to: {my_device.query('*IDN?')}")
+        my_device.write('DISP On')
+        self.dev = my_device
+
 
     def errorcheck(self):
         """Function to check for errors in the device"""

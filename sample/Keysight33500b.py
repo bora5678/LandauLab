@@ -68,13 +68,13 @@ class Keysight33500B:
         self.msg = None
 
         rm = pyvisa.ResourceManager('@py')
-        devices = rm.list_resources('?*')
+        #devices = rm.list_resources('?*')
         # Find the first device with 'TCPIP' in its name
-        tcpip_devices = [dev for dev in devices if 'TCPIP' in dev.upper()]
-        if not tcpip_devices:
-            raise Exception("No TCPIP device found.")
-        my_device = tcpip_devices[0]
-        instrument = rm.open_resource(my_device)
+        #tcpip_devices = [dev for dev in devices if 'TCPIP' in dev.upper()]
+        #if not tcpip_devices:
+        #    raise Exception("No TCPIP device found.")
+       # my_device = tcpip_devices[0]
+        instrument = rm.open_resource('TCPIP0::A-33519B-00620::inst0::INSTR')
         print(f"Connected to: {instrument.query('*IDN?')}")
         instrument.write('DISP On')
         self.dev = instrument

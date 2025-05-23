@@ -77,11 +77,12 @@ class FSV:
         self.sweeps_reg = 1
 
         instr_list = RsInstrument.list_resources('?*')
+        print(instr_list)
         # Find the first device with 'TCPIP' in its name. Change code for other communication methods
-        tcpip_devices = [dev for dev in instr_list if 'TCPIP' in dev.upper()]
-        if not tcpip_devices:
-            raise Exception("No TCPIP device found.")
-        my_device = tcpip_devices[0]
+       # tcpip_devices = [dev for dev in instr_list if 'TCPIP' in dev.upper()]
+        #if not tcpip_devices:
+         #   raise Exception("No TCPIP device found.")
+        my_device = 'TCPIP0::10.157.136.135::inst0::INSTR'
         instrument = RsInstrument(my_device)
         print(f"Connected to: {instrument.query('*IDN?')}")
         self.device = instrument
