@@ -1,2 +1,14 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Ignore build artifacts
+build/** linguist-generated
+dist/** linguist-generated
+
+# Ignore virtual environment files
+venv/** linguist-generated
+
+# (Optional) Ignore any test output
+out/** linguist-generated
+
+# If needed, ignore cache folders
+.mypy_cache/** linguist-generated
