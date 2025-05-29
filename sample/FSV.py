@@ -211,4 +211,5 @@ class FSV:
         else:
             raise ValueError("Invalid sweepvalue")
         self.device.write(f':SWE:TYPE {mode}')
-        self.device.write(f':SWE:TIME {sweeptime}')
+        if mode == 'Manual':
+            self.device.write(f':SWE:TIME {sweeptime}')
