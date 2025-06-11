@@ -21,12 +21,12 @@ def findpeak(span, freq) -> tuple:
         frequency: np.ndarray  
         amplitude, frequency = fsv.startscan(1.0, 3)
         pos = np.where(amplitude == np.max(amplitude))
-        if np.abs(pos - 1000) < 800:
-            freq = frequency[pos][0]
+        if np.abs(pos[0][0] - 1000) < 800:
+            freq = frequency[pos[0][0]]
         check = pos[0][0]
     fpeak = freq
 
-    lindata: tuple = (frequency, 10^(amplitude/20 - 3/2))
+    lindata: tuple = (frequency, 10**((amplitude/20) - 3/2))
     yfit, coef, dcoef = LorentzFit(lindata[0], lindata[1], [])
     ffit = coef[2]
 
