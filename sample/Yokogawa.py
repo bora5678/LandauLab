@@ -14,4 +14,11 @@ class Yokogawa():
         print(f"Connected to: {instrument.query('*IDN?')}")
         self.dev = instrument
 
+    def set_voltage(self, voltage):
+        """Sets the output voltage of the Yokogawa DC source."""
+        self.dev.write(f':SOUR:LEV:FIX {voltage}')
+
+    def set_range(self, range_value):
+        """Sets the output range of the Yokogawa DC source."""
+        self.dev.write(f':SOUR:RANG {range_value}')
    

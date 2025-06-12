@@ -55,7 +55,7 @@
 
 # ...existing code...
 
-from RsInstrument import RsInstrument
+from RsInstrument import RsInstrument 
 import numpy as np
 
 class FSV:
@@ -147,7 +147,7 @@ class FSV:
             self.device.query("*OPC?")  # Waits until operation complete
 
     # Usage example:
-    # fsv_startscan(device, 0.0, 1)  # Single sweep
+    # fsv_startscan(0.0, 1)  # Single sweep
 
     def span(self, freq_span):
         """
