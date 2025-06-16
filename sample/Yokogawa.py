@@ -1,14 +1,14 @@
-#REWORK THIS CLASS
-#Yokogawa DC source address: 'TCPIP0::169.254.98.45::inst0::INSTR'
+
 
 import pyvisa
-from pyvisa.errors import VisaIOError
+#from pyvisa.errors import VisaIOError
 
 
 class Yokogawa():
     """Class to predefine the Keithley2400 parameters."""
 
     def __init__(self):
+        """Initializes the Yokogawa DC source."""
         
         rm = pyvisa.ResourceManager()
         instrument = rm.open_resource('TCPIP0::169.254.98.45::inst0::INSTR')
@@ -16,6 +16,7 @@ class Yokogawa():
         self.dev = instrument
        
     def reconnect(self):
+        """Reconnects to the Yokogawa DC source."""
         rm = pyvisa.ResourceManager()  
         self.dev = rm.open_resource('TCPIP0::169.254.98.45::inst0::INSTR')
         self.dev.timeout = 100000000
@@ -25,7 +26,7 @@ class Yokogawa():
         """Sets the output voltage of the Yokogawa DC source."""
         try: 
             self.dev.write(f':SOUR:LEV:FIX {voltage}')
-        except Exception as e:
+        except Exception:
             print("Session scheint abgelaufen. Versuche, erneut zu verbinden...")
             self.reconnect()
             self.dev.write(f':SOUR:LEV:FIX {voltage}')
