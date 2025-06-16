@@ -134,18 +134,43 @@ class FSV:
         # Set sweep mode: single or continuous
         if modevalue == 0.0:
             self.device.write(":INIT:CONT OFF")  # Single sweep
+            # Start sweep
+            self.device.write(":INIT")
+            self.device.query("*OPC?")  # Waits until operation complete
+            self.device.write(":FORM ASC")
+            amp_data = self.device.query(":TRAC? TRACE1")
+            act_amp = np.array([float(i) for i in amp_data.strip().split(',')])
+            points = int(self.device.query(":SWE:POIN?"))  # holt Anzahl der Sweep-Punkte vom Gerät
+
+
+            start_freq = float(self.device.query(":FREQ:START?"))
+            stop_freq = float(self.device.query(":FREQ:STOP?"))
+            act_freq = np.linspace(start_freq, stop_freq, points)
+
+            return act_amp, act_freq
+
         else:
             self.device.write(":INIT:CONT ON")   # Continuous sweep
-
-        # Set number of sweeps (if supported)
-        self.device.write(f":SWE:COUN {int(sweepnumber)}")
-
-        # Start sweep
-        self.device.write(":INIT")
-
-        if modevalue == 0.0:
+            # Set number of sweeps (if supported)
+            self.device.write(f":SWE:COUN {int(sweepnumber)}")
+            # Start sweep
+            self.device.write(":INIT")
             self.device.query("*OPC?")  # Waits until operation complete
+            self.device.write(":FORM ASC")
+            amp_data = self.device.query(":TRAC? TRACE1")
+            act_amp = np.array([float(i) for i in amp_data.strip().split(',')])
+            points = int(self.device.query(":SWE:POIN?"))  # holt Anzahl der Sweep-Punkte vom Gerät
 
+
+            start_freq = float(self.device.query(":FREQ:START?"))
+            stop_freq = float(self.device.query(":FREQ:STOP?"))
+            act_freq = np.linspace(start_freq, stop_freq, points)
+
+            return act_amp, act_freq
+
+        
+
+      
     # Usage example:
     # fsv_startscan(0.0, 1)  # Single sweep
 
@@ -173,9 +198,10 @@ class FSV:
         self.device.write(':INIT')
         self.device.query('*OPC?')
 
-        self.device.write(":FORK ASC")
+        self.device.write(":FORM ASC")
         amp_data = self.device.query(":TRAC? TRACE1")
-        act_amp = np.array([float(i) for i in amp_data.strip.split(',')])
+        act_amp = np.array([float(i) for i in amp_data.strip().split(',')])
+
 
         start_freq = float(self.device.query(":FREQ:START?"))
         stop_freq = float(self.device.query(":FREQ:STOP?"))
@@ -201,7 +227,7 @@ class FSV:
         """Defines the bandwidth and sweeptime of the FSV
         1.0 - sweep time auto, 0.0 - sweep time manual
         """
-        self.device.write(f':SWE:BWID {bandwidth}') # double check the command
+        self.device.write(f':BAND:RES {bandwidth}') # double check the command
         self.device.write(f':SWE:POIN {sweeppoints}')
         
         if sweepvalue == 1.0:
@@ -210,6 +236,6 @@ class FSV:
             mode = 'Manual'
         else:
             raise ValueError("Invalid sweepvalue")
-        self.device.write(f':SWE:TYPE {mode}')
+        self.device.write(f':SWE:MODE {mode}')
         if mode == 'Manual':
             self.device.write(f':SWE:TIME {sweeptime}')

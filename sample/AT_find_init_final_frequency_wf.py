@@ -1,5 +1,5 @@
 from sample.AT_fsv_findpeak import findpeak
-from Keysight_pfag_81150 import Keysight81150
+from sample.Keysight_pfag_81150 import Keysight81150
 import time
 
 def find_resonances(device1, device2, fres, fdelta, span1, span2, delay) -> tuple:
