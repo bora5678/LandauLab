@@ -29,3 +29,6 @@ def test_high_frequency():
     assert isinstance(X, np.ndarray)
     assert isinstance(deltaU, np.ndarray)
 
+def test_zero_frequency():
+    pass
+    """Test case with zero frequency."""

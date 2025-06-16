@@ -143,6 +143,9 @@ class Keysight81150:
 
     def callArbVolatileFunc(self, channel, unit, level, offset, waveform, freq):
         """Function to call the arbitrary waveform"""
+        #set unit VPP|VRMS|DBM caution put prime(') 'unit' when defining the
+        #unit
+        #pre-defined arb. build-in waveform: EXP_RISE, EXP_FALL, HAVERSINE, SINC, CARDIAC, VOLATILE, GAUSSIAN, NEG_RAMP
         self.dev.write(f'VOLT:UNIT {unit}')
         self.dev.write(f'VOLT:AMPL {level}')
         self.dev.write(f'VOLT:OFFS {offset}')
@@ -157,4 +160,19 @@ class Keysight81150:
     def sendMANTrig(self):
         """Function to send the manual trigger"""
         self.dev.write(':TRIG')
-      
+    
+    def configure_arb_waveform(self, waveform_data, sample_rate, channel=1, name="ARB1"):
+        # Normalize waveform to ±1
+        waveform_data = waveform_data / np.max(np.abs(waveform_data))
+        
+        # Scale to DAC range (14-bit, -8191 to +8191 for example)
+        scaled = (waveform_data * 8191).astype(np.int16)
+
+        # Format as comma-separated string (slow but readable)
+        data_str = ",".join(map(str, scaled))
+
+        # Create waveform
+        self.dev.write(f"SOURce{channel}:DATA:ARB:DAC {name}, {data_str}")
+        self.dev.write(f"SOURce{channel}:FUNCtion:ARB {name}")
+        self.dev.write(f"SOURce{channel}:FUNCtion ARB")
+        self.dev.write(f"SOURce{channel}:FUNCtion:ARB:SRATe {sample_rate}")

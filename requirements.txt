@@ -7,3 +7,4 @@ matplotlib
 RsInstrument
 pyvisa
 pyvisa-py
+pywin32

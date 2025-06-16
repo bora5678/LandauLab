@@ -14,6 +14,7 @@ from datetime import datetime
 import shutil
 import numpy as np
 
+
 if __name__ == '__main__':
 
     workingdir = os.getcwd()
@@ -165,6 +166,11 @@ if __name__ == '__main__':
     fsv.configMaxAvg(fsv_points, finitfit2, fsv_span_noise0, fsv_sweeps_noise)
 
     # create an arbitrary pulse and use Ramsey_pulse function to load in to the AWG
-
-
+    c = [0.272035, 0, 0, 0]
+    d = [-0.815085, 0, 0, 0]
+    _ , pulseform1 = Ramsey_pulse_3rdcorr(AWGFreq_reg, 20, Delta_pulse, c, d )
+    awg = Keysight81150()
+    awg.configure_arb_waveform(pulseform1, sample_rate=AWGFreq_reg*5e5, channel=1, name="Ramsey")
+ 
+    
    
