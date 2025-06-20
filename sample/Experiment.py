@@ -10,6 +10,12 @@ def find_initial_frequency() -> float:
     gs200 = Yokogawa()
     gs200.set_range(30)
     gs200.set_voltage(-18)
+    time.sleep(1)  # Allow some time for the voltage to stabilize
+
+    ks = Keysight33500B()
+    ks.selectSine(unit="VPP", amp=2.0, freq=6.6647e6, offset=0.0)
+    ks.outp_on(channel=1)
+    time.sleep(1)  # Allow some time for the signal to stabilize
 
     fsv = FSV()
     fsv.span(1e6)  # Set span to 20 MHz
@@ -39,8 +45,6 @@ def measurement():
         gs200.set_voltage(i)
         time.sleep(tau)
 
-    freq_init = find_initial_frequency()
-
     fsv = FSV()
     fsv.span(20e6)  # Set span to 20 MHz
     fsv.bw(0.2e6, 2001, 1.0, 1)  # Set bandwidth to 0.2 MHz, sweep points to 2001
@@ -51,4 +55,4 @@ def measurement():
     pos = np.where(a == np.max(a))
     freq_final = f[pos[0][0]]
 
-    return freq_init, freq_final
+    return freq_final
