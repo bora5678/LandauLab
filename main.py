@@ -24,7 +24,7 @@ if __name__ == '__main__':
     print(f"Final frequency: {f} Hz")
 
     vlt = np.linspace(-20, -12, len(amp_lin))
-    plt.scatter(vlt, amp_lin, color='blue', marker='o')                  
+    plt.plot(vlt, amp_lin, color='blue', marker='o')                  
     plt.xlabel("Voltage")
     plt.ylabel("Amplitude(Vrms)")
     plt.title("Mechanical Mode")

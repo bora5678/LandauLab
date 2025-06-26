@@ -14,7 +14,7 @@ def find_initial_frequency() -> float:
 
     ks = Keysight33500B()
     ks.selectSine(unit="VPP", amp=0.1, freq=6.6647e6, offset=0.0)
-    ks.outp_on(channel=1)
+    ks.outp_on()
     time.sleep(1)  # Allow some time for the signal to stabilize
 
     fsv = FSV()
@@ -48,7 +48,7 @@ def measurement():
 
     key = Keysight33500B()
     key.selectSine(unit="VPP", amp=0.1, freq=6.6647e6, offset=0.0)
-    key.outp_on(channel=1)
+    key.outp_on()
     time.sleep(1)  # Allow some time for the signal to stabilize
 
     tau = 1

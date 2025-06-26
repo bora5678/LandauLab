@@ -93,23 +93,23 @@ class Keysight33500B:
         self.dev.close()
         print("Device disconnected.")
 
-    def outp_on(self, channel):
+    def outp_on(self):
         """Function to turn on the output of the device"""
-        self.dev.write(f'OUTP{channel}: ON')
+        self.dev.write(f'OUTPut ON')
         self.errorcheck()
         if self.msg:
             print(f"Error: {self.msg}")
         else:
-            print(f"Output {channel} turned on.")
+            print(f"Output turned on.")
     
-    def outp_off(self, channel):
+    def outp_off(self):
         """Function to turn off the output of the device"""
-        self.dev.write(f'OUTPut{channel}: OFF')
+        self.dev.write(f'OUTPut OFF')
         self.errorcheck()
         if self.msg:
             print(f"Error: {self.msg}")
         else:
-            print(f"Output {channel} turned off.")
+            print(f"Output turned off.")
 
     def selectSine(self, unit, amp, freq, offset):
         """Function to select the sine wave"""
