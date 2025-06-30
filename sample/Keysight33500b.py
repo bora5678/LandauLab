@@ -159,3 +159,25 @@ class Keysight33500B:
     def sendMANTrig(self):
         """Function to send the manual trigger"""
         self.dev.write(':TRIG')
+
+
+from dataclasses import dataclass
+
+@dataclass
+class NoiseSettings:
+    offset: float = 0.0  # dBm
+    start: float = -30.0
+    stop: float = -20.0
+    step: float = 5.0
+    unit: str = 'dbm'
+    bandwidth: float = 10e6  # Hz
+
+@dataclass
+class SineSettings:
+    offset: float = 0.0
+    start: float = -60.0
+    stop: float = -50.0
+    step: float = 5.0
+    unit: str = 'dbm'
+    start_0: float = -56.0
+    step_0: float = 0.1

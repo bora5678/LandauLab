@@ -239,3 +239,16 @@ class FSV:
         self.device.write(f':SWE:MODE {mode}')
         if mode == 'Manual':
             self.device.write(f':SWE:TIME {sweeptime}')
+
+from dataclasses import dataclass
+
+@dataclass
+class FSVSettings:
+    center_freq: float = 6.52e6  # Hz
+    span: float = 4e3
+    points: int = 5000
+    sweeps: int = 1
+    bandwidth: float = 1e3
+    sweep_time: float = 0.3  # second
+
+
