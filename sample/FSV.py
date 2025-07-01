@@ -240,12 +240,48 @@ class FSV:
         if mode == 'Manual':
             self.device.write(f':SWE:TIME {sweeptime}')
 
+    
+    
+#      function configZeroSpan(obj, center, points, bw, sweepTime)
+#            fprintf(obj.dev,['FREQuency:CENTer ', num2str(center)]); % Set center frequency
+#            fprintf(obj.dev,['FREQuency:SPAN ', num2str(0)]); % Set frequency span
+#            fprintf(obj.dev,['SWEep:POINts ', num2str(points)]); % Set number of points
+#            fprintf(obj.dev,['BANDwidth ', num2str(bw)]); % Adjust RBW
+# %             fprintf(obj.dev,['SWEep:TIME:AUTO OFF ']); % Adjust sweepTime
+#            fprintf(obj.dev,['SWEep:TIME ', num2str(sweepTime)]); % Adjust sweepTime
+#            fprintf(obj.dev,'SWEep:COUNT 0'); % No averaging
+#        end
+        
+    def configZeroSpan(self, center, points, bw, sweepTime):
+        self.device.write(f'FREQuency:CENTer {center}')
+        self.device.write(f'FREQuency:SPAN {0}')
+        self.device.write(f'SWEep:POINts {points}')
+        self.device.write(f'BANDwidth {bw}')
+        self.device.write(f'SWEep:TIME {sweepTime}')
+        self.device.write(f'SWEep:COUNT {0}')
+
+    def startZeroSpan(self):
+        # fprintf(obj.dev,'INITiate;*WAI'); % *WAI; Initiate measurement and until any prior commands have been completed before continuing on to the next command
+        self.device.write(f'INITiate;*WAI')
+
+    def getDataZeroSpan(self):
+        #function [time, power] = getDataZeroSpan(obj)
+        #    power = str2num(query(obj.dev,'TRACe:DATA? TRACE1'));
+        #    time = str2num(query(obj.dev,'TRACe:DATA:X? TRACE1'));
+        #end
+
+        power = self.device.query('TRACe:DATA? TRACE1')
+        time = self.device.query('TRACe:DATA:X? TRACE1')
+
+        return power, time
+
+
 from dataclasses import dataclass
 
 @dataclass
 class FSVSettings:
-    center_freq: float = 6.52e6  # Hz
-    span: float = 4e3
+    center_freq: float = 7e6  # Hz
+    span: float = 1e6
     points: int = 5000
     sweeps: int = 1
     bandwidth: float = 1e3

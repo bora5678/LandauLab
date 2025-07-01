@@ -166,8 +166,8 @@ from dataclasses import dataclass
 @dataclass
 class NoiseSettings:
     offset: float = 0.0  # dBm
-    start: float = -30.0
-    stop: float = -20.0
+    start: float = -25.0
+    stop: float = -15.0
     step: float = 5.0
     unit: str = 'dbm'
     bandwidth: float = 10e6  # Hz

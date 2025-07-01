@@ -13,20 +13,4 @@ def dbm_to_vrms(dbm, R=50):
 
 if __name__ == '__main__':
     """Main function that runs everything."""
-    i = find_initial_frequency() 
-    f, amp, freq = measurement()
-
-    amp_lin = dbm_to_vrms(amp, R=50)
-
-    print(f'Amplitudes vector: {amp_lin}')
-    print(f'Freq vector: {freq}')
-    print(f"Initial frequency: {i} Hz")
-    print(f"Final frequency: {f} Hz")
-
-    vlt = np.linspace(-20, -12, len(amp_lin))
-    plt.plot(vlt, amp_lin, color='blue', marker='o')                  
-    plt.xlabel("Voltage")
-    plt.ylabel("Amplitude(Vrms)")
-    plt.title("Mechanical Mode")
-    plt.grid(False)
-    plt.show()
+    measurement()
