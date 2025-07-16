@@ -87,7 +87,7 @@ class FSV:
             self.device.write(f'TRIG:SOUR {mode}')
             
             # Set trigger delay and polarity
-            self.device.write(f'TRIG:DEL {delay}')
+            self.device.write(f'TRIG:HOLD {delay}')
             self.device.write(f'TRIG:SLOP {"POS" if polarity == 1 else "NEG"}')
             
             # If external trigger, set level
@@ -263,12 +263,20 @@ class FSV:
 
         return power, time
 
+    def singlesweep(self):
+        """Sets number of sweeps to 1"""
+        self.device.write('INIT:CONT OFF')
+
+    def contsweep(self):
+        """Sets continuous sweep"""
+        self.device.write('INIT:CONT ON')
+
 
 from dataclasses import dataclass
 
 @dataclass
 class FSVSettings:
-    center_freq: float = 6.916e6  # Hz
+    center_freq: float = 6.8922e6  # Hz
     span: float = 10e3
     points: int = 5000
     sweeps: int = 1

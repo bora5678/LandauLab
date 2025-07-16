@@ -5,10 +5,10 @@ from sample.Yokogawa import Yokogawa
 from sample.FSV import FSV, FSVSettings
 import time
 import numpy as np
-from scipy.optimize import minimize 
 import matplotlib.pyplot as plt
 from time import perf_counter
 import threading
+from sample.Keysight_pfag_81150 import Keysight81150, AWGSettings
 
 def find_initial_frequency() -> float:
     """Find the starting point of the measurement."""
@@ -48,7 +48,7 @@ def scan(fsv):
     fsv.startZeroSpan()
     
 
-def measurement():
+def Ringdown_measurement():
     """Perform the measurement."""
 
     ks = Keysight33500B()
@@ -65,17 +65,6 @@ def measurement():
 
     gs200.set_range(30)
     gs200.set_voltage(-20)
-
-    #Fit Parameters
-  #  beta = [500000, 1e2, 6.519e-6, 0, 1] # startparameters (quality, drive power, f_res, noise level p1, noise level p2)
-
-
-    options = {
-        'max_nfev': 5000,
-        'xtol': 1e-12,   # Equivalent to TolX
-        'ftol': 1e-18,   # Equivalent to TolFun
-        # 'TolBnd' has no direct equivalent in SciPy. If bounds are used, they're enforced separately.
-    }
 
     #Start main loop:
 
@@ -152,7 +141,7 @@ def measurement():
         print(f"Index i: {i} (type: {type(i)})")
         print(f'Power type:{type(power_array)}')
 
-        plt.plot(time_array, power_array,'o',  label=f"ringdown at {int(i)} dBm.fig")
+        plt.plot(time_array, power_array,'o',  label=f"ringdown at {int(10)} dBm.fig")
         plt.autoscale
         plt.legend()
         plt.grid(True)  # Optional: add grid like MATLAB
@@ -162,3 +151,141 @@ def measurement():
         plt.show()
 
 
+def Landau_Zener():
+    
+    ks = Keysight33500B()
+    fsv = FSV()
+    gs200 = Yokogawa()
+    awg = Keysight81150()
+
+    noise_cfg = NoiseSettings()
+    sine_cfg = SineSettings()
+    fsv_cfg = FSVSettings()
+    awg_cfg = AWGSettings()
+
+    # Other standalone variables
+    sleep_duration = 0.2  # seconds
+    detector_frequency = 0  # Hz
+
+    gs200.set_range(30)
+    gs200.set_voltage(-20)
+
+    #Reset fsv
+
+    fsv.trigger('IMM', 0, 1, 0.9)
+    fsv.singlesweep()
+
+    #Initialize awg
+    
+    awg.setTriggerMode('IMM')
+    awg.selectFunction(1, 'DC', 0)
+    awg.setDCOffset(0)
+
+
+    #Noise Measurement
+
+    ks.outp_on()
+    for j in np.arange(noise_cfg.start, noise_cfg.stop+1, noise_cfg.step):
+        ks.selectNoise(unit = noise_cfg.unit, amplitude = j, offset= noise_cfg.offset, bandwidth= noise_cfg.bandwidth)
+            
+        print(f'{j}')
+        precise_delay(1)
+
+        
+    fsv.bw(fsv_cfg.bw, fsv_cfg.points, 1.0, 2)
+    fsv.configMaxAvg(sweep_points = fsv_cfg.points, center_freq = fsv_cfg.center_freq, freq_span = fsv_cfg.span, sweep_number = fsv_cfg.sweeps)
+    amp, freq = fsv.scan(fsv_cfg.points)
+    amp = np.sqrt(50) * 10 ** (amp.T / 20 - 3/2)
+    
+
+    fitted_parameter:list = fit_lorentzian(freq, amp)
+
+    print(fitted_parameter)
+    print(f'The resonance frequency of the string is at {fitted_parameter[0]/1e6}')
+    #Search for peak at target Voltage:
+    vlt = float(input('Target Voltage: '))
+    f = float(input('Expected final freq: '))
+    for i in np.arange(-20, vlt+1, 1):
+        gs200.set_voltage(i)
+        precise_delay(1)
+
+    fsv.bw(fsv_cfg.bw, fsv_cfg.points, 1.0, 2)
+    fsv.configMaxAvg(sweep_points = fsv_cfg.points, center_freq = f, freq_span = fsv_cfg.span, sweep_number = fsv_cfg.sweeps)
+    amp_fin, freq_fin = fsv.scan(fsv_cfg.points)
+    amp_fin = np.sqrt(50) * 10 ** (amp_fin.T / 20 - 3/2)
+    
+
+    fitted_parameter_fin:list = fit_lorentzian(freq_fin, amp_fin)
+    land_freq=fitted_parameter_fin[0]
+    print(land_freq)
+    print(fitted_parameter_fin)
+
+    for i in np.arange(vlt, -21, -1):
+        gs200.set_voltage(i)
+        precise_delay(1)
+
+
+    #Prepare ramp function
+ 
+    awg.outp_off(1)
+    precise_delay(0.2)
+    awg.callArbVolatileFunc(1, awg_cfg.AWGUnit, awg_cfg.AWGLevel, 0, 'AWG_S6', 1)
+    precise_delay(0.2)
+    
+    awg.setTriggerMode('EXT')
+   
+    precise_delay(1)
+    awg.outp_on(1)
+    precise_delay(0.2)
+  
+    res_freq_fit = fitted_parameter[0]
+    Q_fct = fitted_parameter[2]
+    center_freq = res_freq_fit+detector_frequency
+    fsv.configZeroSpan(land_freq, fsv_cfg.points, fsv_cfg.bandwidth_ringdown, fsv_cfg.sweep_time)
+    fsv.trigger('EXT', 0, 1, 0.9)
+    fsv.contsweep
+    precise_delay(1)
+    
+
+    # Main measurement
+
+    awg.outp_off(1)
+    precise_delay(0.2)
+    awg.setTriggerMode('MAN')
+    precise_delay(1)
+    
+    awg.callArbVolatileFunc(1,awg_cfg.AWGUnit, awg_cfg.AWGLevel, awg_cfg.AWGOffset, awg_cfg.AWGWaveform, awg_cfg.AWGFreq)
+    precise_delay(0.2)
+    awg.outp_on(1)
+    print('asdfas')
+    precise_delay(5)
+
+    ks.selectSine(sine_cfg.unit, -10, center_freq, sine_cfg.offset)
+    precise_delay(1)
+    ks.outp_on()
+
+    awg.sendMANTrig()
+
+    power, time = fsv.getDataZeroSpan()
+
+    # Split string into list of floats
+    time = np.array([float(x) for x in time.split(',')])
+    power = np.array([float(x) for x in power.split(',')])
+
+    power = np.sqrt(50) * 10 ** (power / 20 - 1.5)
+
+    plt.plot(time, power,'o',  label=f"Landau Zener at {int(10)} dBm.fig")
+    plt.autoscale
+    plt.legend()
+    plt.grid(True)  # Optional: add grid like MATLAB
+    plt.xlabel("Time")  # Optional
+    plt.ylabel("Power")  # Optional
+    plt.title(f"Landau Zener")
+    plt.show()
+
+    #cleanup
+
+    fsv.trigger('IMM', 0, 1, 0.9)
+    awg.outp_off(1)
+    fsv.singlesweep()
+    ks.outp_off()

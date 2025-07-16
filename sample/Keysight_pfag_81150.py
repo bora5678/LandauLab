@@ -65,7 +65,7 @@ class Keysight81150:
         self.stat = None
         self.msg = None
 
-        rm = pyvisa.ResourceManager('@py')
+        rm = pyvisa.ResourceManager()
         #devices = rm.list_resources('?*')
         # Find the first device with 'TCPIP' in its name
        # tcpip_devices = [dev for dev in devices if 'TCPIP' in dev.upper()]
@@ -75,7 +75,6 @@ class Keysight81150:
         my_device = rm.open_resource('TCPIP0::A-81150A-821936::inst0::INSTR')
         #instrument = rm.open_resource(my_device)
         print(f"Connected to: {my_device.query('*IDN?')}")
-        my_device.write('DISP On')
         self.dev = my_device
 
 
@@ -95,7 +94,7 @@ class Keysight81150:
     
     def outp_on(self, channel):
         """Function to turn on the output of the device"""
-        self.dev.write(f'OUTP{channel}: ON')
+        self.dev.write(f':OUTP{channel}: ON')
         self.errorcheck()
         if self.msg:
             print(f"Error: {self.msg}")
@@ -104,7 +103,7 @@ class Keysight81150:
     
     def outp_off(self, channel):
         """Function to turn off the output of the device"""
-        self.dev.write(f'OUTPut{channel}: OFF')
+        self.dev.write(f':OUTPut{channel}: OFF')
         self.errorcheck()
         if self.msg:
             print(f"Error: {self.msg}")
@@ -137,7 +136,7 @@ class Keysight81150:
         #set unit VPP|VRMS|DBM, caution put prime(') 'unit' when defining the
         #unit
 
-        self.outp_off(unit, 1)
+        self.outp_off(1)
         self.dev.write(f'VOLT:AMPL {level}')
         self.dev.write(f'VOLT:OFFS {offset}')
 
@@ -149,7 +148,7 @@ class Keysight81150:
         self.dev.write(f'VOLT:UNIT {unit}')
         self.dev.write(f'VOLT:AMPL {level}')
         self.dev.write(f'VOLT:OFFS {offset}')
-        self.dev.write(f'SOURce{channel}:FUNCtion:ARB USER')
+        self.dev.write(f'SOURce{channel}:FUNCtion USER')
         self.dev.write(f':FUNC1:USER {waveform}')
         self.dev.write(f'FREQ {freq}')
 
@@ -161,4 +160,15 @@ class Keysight81150:
         """Function to send the manual trigger"""
         self.dev.write(':TRIG')
     
- 
+
+
+from dataclasses import dataclass
+
+@dataclass
+class AWGSettings:
+    TriggerMode: str = 'EXT'
+    AWGUnit: str = 'VPP'
+    AWGLevel: float = 2.5
+    AWGOffset: float = 1.25
+    AWGWaveform: str = 'AWG_S0'
+    AWGFreq: float = 0.5  # Hz

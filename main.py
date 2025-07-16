@@ -1,5 +1,5 @@
 from pickle import FALSE
-from sample.Experiment import find_initial_frequency, measurement
+from sample.Experiment import find_initial_frequency, Ringdown_measurement, Landau_Zener
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -13,5 +13,5 @@ def dbm_to_vrms(dbm, R=50):
 
 if __name__ == '__main__':
     """Main function that runs everything."""
-    measurement()
+    Landau_Zener()
      
