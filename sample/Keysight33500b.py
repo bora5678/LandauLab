@@ -166,18 +166,18 @@ from dataclasses import dataclass
 @dataclass
 class NoiseSettings:
     offset: float = 0.0  # dBm
-    start: float = -25.0
-    stop: float = -15.0
+    start: float = -30
+    stop: float = -5
     step: float = 5.0
     unit: str = 'dbm'
-    bandwidth: float = 10e6  # Hz
+    bandwidth: float = 8e6  # Hz
 
 @dataclass
 class SineSettings:
     offset: float = 0.0
-    start: float = -60.0
-    stop: float = -50.0
-    step: float = 5.0
+    start: float = -11
+    stop: float = -10
+    step: float = 1
     unit: str = 'dbm'
-    start_0: float = -56.0
-    step_0: float = 0.1
+    amp: float = -20.0
+ 

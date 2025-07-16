@@ -63,18 +63,6 @@ class FSV:
 # add return values to the functions
 # add error handling
     def __init__(self):
-        self.name = 'FSV'
-        self.points = 2001 # to be removed, added identifiers
-        self.sweeps_noise = 3
-        self.bw_noise = 10
-        self.points_low = 1001
-        self.points_high = 2001
-        self.span_noise0 = 20e3
-        self.span_noise = 5e3
-        self.zerospan = 0
-        self.bw_reg = 100
-        self.sweeptime_reg = 1
-        self.sweeps_reg = 1
 
         instr_list = RsInstrument.list_resources('?*')
         print(instr_list)
@@ -280,11 +268,12 @@ from dataclasses import dataclass
 
 @dataclass
 class FSVSettings:
-    center_freq: float = 7e6  # Hz
-    span: float = 1e6
+    center_freq: float = 6.916e6  # Hz
+    span: float = 10e3
     points: int = 5000
     sweeps: int = 1
-    bandwidth: float = 1e3
+    bandwidth_ringdown: float = 1000
+    bw: float = 1.0
     sweep_time: float = 0.3  # second
 
 

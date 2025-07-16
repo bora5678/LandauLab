@@ -19,7 +19,7 @@ class Yokogawa():
         """Reconnects to the Yokogawa DC source."""
         rm = pyvisa.ResourceManager()  
         self.dev = rm.open_resource('TCPIP0::169.254.98.45::inst0::INSTR')
-        self.dev.timeout = 100000000
+        #self.dev.timeout = 100000000
         #print("Neu verbunden:", self.dev.query("*IDN?"))
 
     def set_voltage(self, voltage):
